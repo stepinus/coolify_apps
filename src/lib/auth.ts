@@ -27,7 +27,7 @@ export const authOptions: NextAuthOptions = {
         username: { label: "Username", type: "text", placeholder: "admin" },
         password: { label: "Password", type: "password", placeholder: "your_secure_password" }
       },
-      async authorize(credentials): Promise<User | null> {
+      async authorize(credentials: Record<"username" | "password", string> | undefined): Promise<User | null> {
         if (!credentials) {
           return null;
         }

@@ -14,7 +14,7 @@ interface MetaData {
   port: number;
 } 
 export default function Home() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [templates, setTemplates] = useState<string[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const [templateContent, setTemplateContent] = useState<string>('');
@@ -74,38 +74,48 @@ export default function Home() {
     template.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="flex h-screen">
-      {/* Левая колонка */}
-      <div className="w-1/3 p-4 border-r">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Поиск шаблонов"
-          className="w-full p-2 border mb-4"
-        />
-        <ul>
-          {filteredTemplates.map(template => (
-            <li
-              key={template}
-              onClick={() => handleLoadTemplate(template)}
-              className={`p-2 cursor-pointer ${template === selectedTemplate ? 'bg-gray-200' : ''}`}
-            >
-              {template}
-            </li>
-          ))}
-        </ul>
-      </div>
-      
-      {/* Правая колонка */}
-      <div className="w-2/3 p-4">
-        <TemplateForm 
-          metadata={metadata} 
-          setMetadata={setMetadata} 
-          handleSaveTemplate={handleSaveTemplate} 
-        />
-      </div>
+      {session ? (
+        <>
+          {/* Левая колонка */}
+          <div className="w-1/3 p-4 border-r">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Поиск шаблонов"
+              className="w-full p-2 border mb-4"
+            />
+            <ul>
+              {filteredTemplates.map(template => (
+                <li
+                  key={template}
+                  onClick={() => handleLoadTemplate(template)}
+                  className={`p-2 cursor-pointer ${template === selectedTemplate ? 'bg-gray-200' : ''}`}
+                >
+                  {template}
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          {/* Правая колонка */}
+          <div className="w-2/3 p-4">
+            <TemplateForm 
+              metadata={metadata} 
+              setMetadata={setMetadata} 
+              handleSaveTemplate={handleSaveTemplate} 
+            />
+          </div>
+        </>
+      ) : (
+        <div>Please sign in</div>
+      )}
     </div>
   );
 };
