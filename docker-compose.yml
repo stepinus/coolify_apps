@@ -1,0 +1,10 @@
+version: '3'
+services:
+  app:
+    build: .
+    volumes:
+      - /data/coolify/templates:/data/coolify/templates
+    ports:
+      - "3000:3000"
+    environment:
+      NEXTAUTH_SECRET: your_nextauth_secret
