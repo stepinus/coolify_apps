@@ -1,6 +1,22 @@
 import React from 'react';
 
 const TemplateForm = ({ metadata, setMetadata, handleSaveTemplate }) => {
+  const handleLogoUpload = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setMetadata({ ...metadata, logo: reader.result });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handlePortChange = (e) => {
+    const port = e.target.value;
+    if (port >= 0 && port <= 65535) {
+      setMetadata({ ...metadata, port });
+    }
+  };
+
   return (
     <div className="w-2/3 p-4">
       <textarea
@@ -31,10 +47,8 @@ const TemplateForm = ({ metadata, setMetadata, handleSaveTemplate }) => {
         className="w-full p-2 border mb-2"
       />
       <input
-        type="text"
-        value={metadata.logo}
-        onChange={(e) => setMetadata({ ...metadata, logo: e.target.value })}
-        placeholder="URL логотипа"
+        type="file"
+        onChange={handleLogoUpload}
         className="w-full p-2 border mb-2"
       />
       {metadata.logo ? (
@@ -45,7 +59,7 @@ const TemplateForm = ({ metadata, setMetadata, handleSaveTemplate }) => {
       <input
         type="number"
         value={metadata.port}
-        onChange={(e) => setMetadata({ ...metadata, port: e.target.value })}
+        onChange={handlePortChange}
         placeholder="Порт"
         className="w-full p-2 border mb-4"
       />

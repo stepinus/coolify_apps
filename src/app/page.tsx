@@ -35,7 +35,7 @@ export default function Home() {
       const response = await axios.post('/api/templates/load', { filename: template });
       setSelectedTemplate(template);
       setTemplateContent(response.data.content);
-      <div className="w-1/3 p-4 border-r">
+      setMetadata(response.data.metadata); // Добавлено для загрузки метаданных
     } catch (error) {
       console.error('Ошибка при загрузке шаблона:', error);
     }
@@ -67,7 +67,7 @@ export default function Home() {
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Поис�� шаблонов"
+          placeholder="Поиск шаблонов"
           className="w-full p-2 border mb-4"
         />
         <ul>

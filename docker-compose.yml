@@ -1,10 +1,27 @@
-version: '3'
+# documentation: https://docs.example.com/
+# slogan: Менеджмент локальной коллекции Coolify Apps
+# tags: coolify,docker,management
+# logo: svgs/coolify-apps.svg
+# port: 3000
+
+version: '3.8'
 services:
-  app:
-    build: .
+  coolify-apps:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=${COOLIFY_DATABASE_URL}
+      - SERVICE_FQDN_COOLIFY_APPS=/coolify
+      - SERVICE_PASSWORD_COOLIFY_APPS=${SERVICE_PASSWORD_COOLIFY_APPS}
     volumes:
-      - /data/coolify/templates:/data/coolify/templates
+      - ${COOLIFY_VOLUME_COOLIFY_APPS}:/app/data
     ports:
       - "3000:3000"
-    environment:
-      NEXTAUTH_SECRET: your_nextauth_secret
+    labels:
+      - coolify.managed=true
+      - coolify.applicationId=1
+      - coolify.type=application
+      - traefik.enable=true
+      - "traefik.http.routers.coolify-apps.rule=Host(`your-domain.com`) && PathPrefix(`/`)"
+      - traefik.http.routers.coolify-apps.entryPoints=http
