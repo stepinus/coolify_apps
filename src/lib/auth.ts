@@ -11,7 +11,7 @@ export const authOptions = {
       },
       async authorize(credentials) {
         const { username, password } = credentials;
-        if (username === 'admin' && password === 'your_secure_password') {
+        if (username === 'admin' && password === 'Leshiy##1') {
           return { id: '1', name: 'Admin' };
         }
         return null;
