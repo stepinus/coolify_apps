@@ -1,7 +1,25 @@
-import NextAuth from 'next-auth';
+import NextAuth, { DefaultSession, DefaultUser, NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { JWT } from 'next-auth/jwt';
 
-export const authOptions = {
+// Расширяем JWT, чтобы включить поля пользователя
+interface ExtendedJWT extends JWT {
+  id: string;
+  name: string;
+}
+
+// Расширяем типы для пользователя
+interface User extends DefaultUser {
+  id: string;
+  name: string;
+}
+
+// Расширяем типы для сессии
+interface Session extends DefaultSession {
+  user: User;
+}
+
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -9,7 +27,10 @@ export const authOptions = {
         username: { label: "Username", type: "text", placeholder: "admin" },
         password: { label: "Password", type: "password", placeholder: "your_secure_password" }
       },
-      async authorize(credentials) {
+      async authorize(credentials): Promise<User | null> {
+        if (!credentials) {
+          return null;
+        }
         const { username, password } = credentials;
         if (username === 'admin' && password === 'Leshiy##1') {
           return { id: '1', name: 'Admin' };
@@ -22,15 +43,22 @@ export const authOptions = {
     signIn: '/login'
   },
   callbacks: {
-    async session({ session, token }) {
-      session.user = token;
-      return session;
+    async session({ session, token }): Promise<Session> {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id as string,
+          name: token.name as string,
+        },
+      };
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user }): Promise<ExtendedJWT> {
       if (user) {
-        token = user;
+        token.id = user.id;
+        token.name = user.name;
       }
-      return token;
+      return token as ExtendedJWT;
     }
   }
 };
