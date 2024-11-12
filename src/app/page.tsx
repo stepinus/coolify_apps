@@ -93,6 +93,4 @@ export default function Home() {
       </div>
     </div>
   );
-}
-          className="w-full p-2 border mb-4"        />        <button          onClick={handleSaveTemplate}          className="mt-4 bg-blue-500 text-white p-2 rounded"        >          Сохранить        </button>      </div>    </div>  );
-}
+};
