@@ -1,11 +1,21 @@
-version: '3'
+version: '3.8'
+
 services:
-  app:
-    build:
-      context: https://github.com/stepinus/coolify_apps.git
-    volumes:
-      - /data/coolify/templates:/data/coolify/templates
+  nextjs:
+    build: 
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
-      NEXTAUTH_SECRET: your_nextauth_secret
+      - NODE_ENV=production
+      - NEXTAUTH_SECRET=your_super_secret_key
+      - NEXTAUTH_URL=http://localhost:3000
+    volumes:
+      # Линковка темплейтов
+      - /data/coolify/templates:/data/coolify/templates
+      # Персистентное хранение
+      - nextjs-data:/app/.next/cache
+      
+volumes:
+  nextjs-data:
