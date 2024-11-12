@@ -1,17 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { signOut } from 'next-auth/react';
 import { useSession, signIn } from 'next-auth/react';
 import axios from 'axios';
 import TemplateForm from './components/TemplateForm';
 
+interface MetaData { 
+  content: string;
+  documentation: string;
+  slogan: string;
+  tags: string;
+  logo: string | ArrayBuffer | null;
+  port: number;
+} 
 export default function Home() {
   const { data: session } = useSession();
   const [templates, setTemplates] = useState<string[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const [templateContent, setTemplateContent] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [metadata, setMetadata] = useState<MetaData>({
+    content: '',
+    documentation: '',
+    slogan: '',
+    tags: '',
+    logo: null,
+    port: 0,
+  });
 
   useEffect(() => {
     if (session) {

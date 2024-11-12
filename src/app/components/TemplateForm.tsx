@@ -1,17 +1,39 @@
 import React from 'react';
+import Image from 'next/image';
 
-const TemplateForm = ({ metadata, setMetadata, handleSaveTemplate }) => {
-  const handleLogoUpload = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setMetadata({ ...metadata, logo: reader.result });
-    };
-    reader.readAsDataURL(file);
+interface Metadata {
+  content: string;
+  documentation: string;
+  slogan: string;
+  tags: string;
+  logo: string | ArrayBuffer | null;
+  port: number;
+}
+
+interface TemplateFormProps {
+  metadata: Metadata;
+  setMetadata: React.Dispatch<React.SetStateAction<Metadata>>;
+  handleSaveTemplate: () => void;
+}
+
+const TemplateForm: React.FC<TemplateFormProps> = ({
+  metadata,
+  setMetadata,
+  handleSaveTemplate,
+}) => {
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setMetadata({ ...metadata, logo: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handlePortChange = (e) => {
-    const port = e.target.value;
+  const handlePortChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const port = parseInt(e.target.value, 10);
     if (port >= 0 && port <= 65535) {
       setMetadata({ ...metadata, port });
     }
@@ -52,9 +74,21 @@ const TemplateForm = ({ metadata, setMetadata, handleSaveTemplate }) => {
         className="w-full p-2 border mb-2"
       />
       {metadata.logo ? (
-        <img src={metadata.logo} alt="Logo" className="w-32 h-32 mb-2" />
+        <Image
+          src={typeof metadata.logo === 'string' ? metadata.logo : '/svgs/placeholder.svg'}
+          alt="Logo"
+          width={128}
+          height={128}
+          className="w-32 h-32 mb-2"
+        />
       ) : (
-        <img src="/svgs/placeholder.svg" alt="Placeholder" className="w-32 h-32 mb-2" />
+        <Image
+          src="/svgs/placeholder.svg"
+          alt="Placeholder"
+          width={128}
+          height={128}
+          className="w-32 h-32 mb-2"
+        />
       )}
       <input
         type="number"
