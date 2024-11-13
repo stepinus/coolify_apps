@@ -14,6 +14,12 @@ export async function GET() {
     }
     
     const templates = await fs.readdir(templatesDir);
+
+    // Check if directory is empty
+    if (templates.length === 0) {
+      return NextResponse.json({ templates: [] });
+    }
+
     return NextResponse.json({ templates });
   } catch (error) {
     console.error('Error reading templates:', error);
