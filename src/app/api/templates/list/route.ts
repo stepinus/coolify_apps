@@ -11,23 +11,6 @@ export async function GET() {
     // Log the directory path
     logs += `Checking directory: ${templatesDir}\n`;
     
-    // Log the current directory contents
-    const currentDir = process.cwd();
-    try {
-      const currentDirContents = await fs.readdir(currentDir);
-      logs += `Current directory (${currentDir}) contents: ${currentDirContents}\n`;
-      const upperdir = await fs.readdir(`../`);
-      logs += `upperDir contents: ${upperdir}\n`;      
-      // Log details of each item in the current directory
-      // for (const item of currentDirContents) {
-      //   const itemPath = path.join(currentDir, item);
-      //   const itemStats = await fs.stat(itemPath);
-      //   logs += `Item: ${item}, Type: ${itemStats.isDirectory() ? 'Directory' : 'File'}\n`;
-      // }
-    } catch (error) {
-      logs += `Error reading current directory (${currentDir}) contents: ${error}\n`;
-    }
-    
     // Check if directory exists, if not return empty array
     try {
       await fs.access(templatesDir);
@@ -37,6 +20,7 @@ export async function GET() {
       return NextResponse.json({ templates: [], logs });
     }
     
+    // Read the directory contents
     const templates = await fs.readdir(templatesDir);
     logs += `Templates found: ${templates}\n`;
     
