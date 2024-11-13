@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import TemplateForm from './components/TemplateForm';
 
@@ -15,6 +16,7 @@ interface MetaData {
 } 
 export default function Home() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [templates, setTemplates] = useState<string[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const [templateContent, setTemplateContent] = useState<string>('');
@@ -29,12 +31,12 @@ export default function Home() {
   });
 
   useEffect(() => {
-    if (session) {
+    if (status === "unauthenticated") {
+      router.push('/login');
+    } else if (session) {
       fetchTemplates();
-    } else {
-      signIn();
     }
-  }, [session]);
+  }, [session, status, router]);
 
   const fetchTemplates = async () => {
     try {
@@ -76,6 +78,10 @@ export default function Home() {
 
   if (status === 'loading') {
     return <div>Loading...</div>;
+  }
+
+  if (!session) {
+    return null;
   }
 
   return (

@@ -44,7 +44,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
       <textarea
         value={metadata.content}
         onChange={(e) => setMetadata({ ...metadata, content: e.target.value })}
-        className="w-full h-5/6 p-2 border"
+        className="w-full h-5/6 p-2 border bg-[var(--background)] text-[var(--foreground)]"
         placeholder="Редактирование шаблона..."
       ></textarea>
       <input
