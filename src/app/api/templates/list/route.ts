@@ -16,7 +16,7 @@ export async function GET() {
     try {
       const currentDirContents = await fs.readdir(currentDir);
       logs += `Current directory (${currentDir}) contents: ${currentDirContents}\n`;
-      const upperdir = await fs.readdir('../currentDir');
+      const upperdir = await fs.readdir(`../`);
       logs += `upperDir contents: ${upperdir}\n`;      
       // Log details of each item in the current directory
       // for (const item of currentDirContents) {
