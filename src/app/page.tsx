@@ -14,6 +14,7 @@ interface MetaData {
   logo: string | ArrayBuffer | null;
   port: number;
 } 
+
 export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -72,9 +73,22 @@ export default function Home() {
     }
   };
 
-  const filteredTemplates = templates.filter(template =>
-    template.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const searchTemplates = async (term: string) => {
+    try {
+      const response = await axios.get(`/api/templates/search?term=${term}`);
+      setTemplates(response.data.templates);
+    } catch (error) {
+      console.error('Ошибка при поиске шаблонов:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (searchTerm) {
+      searchTemplates(searchTerm);
+    } else {
+      fetchTemplates();
+    }
+  }, [searchTerm]);
 
   if (status === 'loading') {
     return <div>Loading...</div>;
@@ -98,7 +112,7 @@ export default function Home() {
               className="w-full p-2 border mb-4"
             />
             <ul>
-              {filteredTemplates.map(template => (
+              {templates.map(template => (
                 <li
                   key={template}
                   onClick={() => handleLoadTemplate(template)}

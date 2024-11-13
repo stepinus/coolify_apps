@@ -1,43 +1,60 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
+import path from 'path';
 
 export async function GET() {
+  let logs = '';
+
   try {
     const templatesDir = '/data/coolify/templates';
     
     // Log the directory path
-    console.log(`Checking directory: ${templatesDir}`);
+    logs += `Checking directory: ${templatesDir}\n`;
     
     // Log the current directory contents
     const currentDir = process.cwd();
     try {
       const currentDirContents = await fs.readdir(currentDir);
-      console.log(`Current directory (${currentDir}) contents: ${currentDirContents}`);
+      logs += `Current directory (${currentDir}) contents: ${currentDirContents}\n`;
+      
+      // Log details of each item in the current directory
+      for (const item of currentDirContents) {
+        const itemPath = path.join(currentDir, item);
+        const itemStats = await fs.stat(itemPath);
+        logs += `Item: ${item}, Type: ${itemStats.isDirectory() ? 'Directory' : 'File'}\n`;
+      }
     } catch (error) {
-      console.error(`Error reading current directory (${currentDir}) contents:`, error);
+      logs += `Error reading current directory (${currentDir}) contents: ${error}\n`;
     }
     
     // Check if directory exists, if not return empty array
     try {
       await fs.access(templatesDir);
-      console.log(`Directory exists: ${templatesDir}`);
+      logs += `Directory exists: ${templatesDir}\n`;
     } catch (error) {
-      console.error(`Directory does not exist: ${templatesDir}`, error);
-      return NextResponse.json({ templates: [] });
+      logs += `Directory does not exist: ${templatesDir}, ${error}\n`;
+      return NextResponse.json({ templates: [], logs });
     }
     
     const templates = await fs.readdir(templatesDir);
-    console.log(`Templates found: ${templates}`);
+    logs += `Templates found: ${templates}\n`;
+    
+    // Log details of each item in the templates directory
+    for (const template of templates) {
+      const templatePath = path.join(templatesDir, template);
+      const templateStats = await fs.stat(templatePath);
+      logs += `Template: ${template}, Type: ${templateStats.isDirectory() ? 'Directory' : 'File'}\n`;
+    }
 
     // Check if directory is empty
     if (templates.length === 0) {
-      console.log(`Directory is empty: ${templatesDir}`);
-      return NextResponse.json({ templates: [] });
+      logs += `Directory is empty: ${templatesDir}\n`;
+      return NextResponse.json({ templates: [], logs });
     }
 
-    return NextResponse.json({ templates });
+    return NextResponse.json({ templates, logs });
   } catch (error) {
-    console.error('Error reading templates:', error);
-    return NextResponse.json({ templates: [] }, { status: 500 });
+    logs += `Error reading templates: ${error}\n`;
+    return NextResponse.json({ templates: [], logs }, { status: 500 });
   }
 }
