@@ -73,22 +73,22 @@ export default function Home() {
     }
   };
 
-  const searchTemplates = async (term: string) => {
-    try {
-      const response = await axios.get(`/api/templates/search?term=${term}`);
-      setTemplates(response.data.templates);
-    } catch (error) {
-      console.error('Ошибка при поиске шаблонов:', error);
-    }
-  };
+  // const searchTemplates = async (term: string) => {
+  //   try {
+  //     const response = await axios.get(`/api/templates/search?term=${term}`);
+  //     setTemplates(response.data.templates);
+  //   } catch (error) {
+  //     console.error('Ошибка при поиске шаблонов:', error);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (searchTerm) {
-      searchTemplates(searchTerm);
-    } else {
-      fetchTemplates();
-    }
-  }, [searchTerm]);
+  // useEffect(() => {
+  //   if (searchTerm) {
+  //     // searchTemplates(searchTerm);
+  //   } else {
+  //     fetchTemplates();
+  //   }
+  // }, [searchTerm]);
 
   if (status === 'loading') {
     return <div>Loading...</div>;
