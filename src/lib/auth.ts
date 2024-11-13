@@ -1,4 +1,4 @@
-import NextAuth, { DefaultSession, DefaultUser, NextAuthOptions } from 'next-auth';
+import { DefaultSession, DefaultUser, NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT } from 'next-auth/jwt';
 
